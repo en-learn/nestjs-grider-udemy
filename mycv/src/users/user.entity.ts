@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common'
 import {
   AfterInsert,
   AfterRemove,
@@ -9,6 +10,8 @@ import {
 
 @Entity()
 export class User {
+  private readonly logger = new Logger(User.name)
+
   @PrimaryGeneratedColumn()
   id: number
 
@@ -20,16 +23,16 @@ export class User {
 
   @AfterInsert()
   logInsert() {
-    console.log('Inserted User with id', this.id)
+    this.logger.log(`Inserted User with id ${this.id}`)
   }
 
   @AfterUpdate()
   logUpdate() {
-    console.log('Updated User with id', this.id)
+    this.logger.log(`Updated User with id ${this.id}`)
   }
 
   @AfterRemove()
   logRemove() {
-    console.log('Removed User with id', this.id)
+    this.logger.log(`Removed User with id ${this.id}`)
   }
 }
