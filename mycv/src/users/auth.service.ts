@@ -27,8 +27,10 @@ export class AuthService {
     const result = salt + '.' + hash.toString('hex')
 
     // create a new user and save it
+    const user = this.usersService.create(email, result)
 
     // return the user
+    return user
   }
 
   signin() {
