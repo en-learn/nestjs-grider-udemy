@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { AuthService } from './auth.service'
+import { User } from './user.entity'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'
 
@@ -10,18 +11,30 @@ describe('UsersController', () => {
 
   beforeEach(async () => {
     fakeUsersService = {
-      findOne: () => {},
-      find: () => {},
-      remove: () => {},
-      update: () => {},
+      findOne: (id: number) =>
+        Promise.resolve({ id, email: 'asdf@asdf.com', password: 'asdf' } as User),
+      find: (email: string) =>
+        Promise.resolve([{ id: 1, email, password: 'asdf' } as User]),
+      // remove: () => { },
+      // update: () => { },
     }
     fakeAuthService = {
-      signup: () => {},
-      signin: () => {}
+      // signup: () => { },
+      // signin: () => { }
     }
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
+      providers: [
+        {
+          provide: UsersService,
+          useValue: fakeUsersService
+        },
+        {
+          provide: AuthService,
+          useValue: fakeAuthService
+        }
+      ]
     }).compile()
 
     controller = module.get<UsersController>(UsersController)
