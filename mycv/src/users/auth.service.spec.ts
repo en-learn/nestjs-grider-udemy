@@ -51,8 +51,9 @@ describe('AuthService', () => {
 
   it('throws an error if user signs up with email that is in use', async () => {
     expect.assertions(1)
-    fakeUsersService.find = () => Promise.resolve([{ id: 1, email: 'a', password: '1' } as User])
-    await expect(service.signup('asdf@asdf.com', 'asdf')).rejects.toBeInstanceOf(BadRequestException)
+    const [email, password] = ['asdf@asdf.com', 'mypassword']
+    await service.signup(email, password)
+    await expect(service.signup(email, password)).rejects.toBeInstanceOf(BadRequestException)
   })
 
   it('throws if signin is called with an unused email', async () => {
@@ -60,10 +61,11 @@ describe('AuthService', () => {
     await expect(service.signin('asdf@asdf.com', 'asdf')).rejects.toBeInstanceOf(NotFoundException)
   })
 
-  it('thows if an invalid password is provided', async () => {
+  it('throws if an invalid password is provided', async () => {
     expect.assertions(1)
-    fakeUsersService.find = () => Promise.resolve([{ id: 1, email: 'asdf@asdf.com', password: 'abcd123' } as User])
-    await expect(service.signin('fdsa@fdsa.com', 'pass')).rejects.toBeInstanceOf(BadRequestException)
+    const [email, password] = ['asdf@asdf.com', 'mypassword']
+    await service.signup(email, password)
+    await expect(service.signin(email, 'notmypassword')).rejects.toBeInstanceOf(BadRequestException)
   })
 
   it('returns a user if correct password is provided', async () => {
