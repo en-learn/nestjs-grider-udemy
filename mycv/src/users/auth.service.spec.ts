@@ -10,10 +10,17 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     // create a fake copy of the users service
+    const users: User[] = []
     fakeUsersService = {
-      find: () => Promise.resolve([]),
-      create: (email: string, password: string) =>
-        Promise.resolve({ id: 1, email, password } as User)
+      find: (email: string) => {
+        const filteredUsers = users.filter(user => user.email === email)
+        return Promise.resolve(filteredUsers)
+      },
+      create: (email: string, password: string) => {
+        const user = { id: Math.floor(Math.random() * 999999), email, password } as User
+        users.push(user)
+        return Promise.resolve(user)
+      }
     }
 
     const module = await Test.createTestingModule({
@@ -60,10 +67,9 @@ describe('AuthService', () => {
   })
 
   it('returns a user if correct password is provided', async () => {
-    fakeUsersService.find = () => Promise.resolve([{ id: 1, email: 'asdf@asdf.com', password: 'abcd123' } as User])
-
-    const user = await service.signin('asdf@asdf.com', 'mypassword')
+    const [email, password] = ['asdf@asdf.com', 'mypassword']
+    await service.signup(email, password)
+    const user = await service.signin(email, password)
     expect(user).toBeDefined()
-    // How to generate a proper password?
   })
 })
