@@ -1,4 +1,3 @@
-import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 const cookieSession = require('cookie-session')
@@ -8,12 +7,6 @@ async function bootstrap() {
   app.use(cookieSession({
     keys: ['asdfasdf']
   }))
-  app.useGlobalPipes(
-    new ValidationPipe({
-      // Strips extraneous properties
-      whitelist: true,
-    }),
-  )
   await app.listen(3000)
 }
 bootstrap()
